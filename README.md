@@ -1,0 +1,1 @@
+# ict-trader-ninja
