@@ -7,6 +7,7 @@ using NinjaTrader.Gui.Tools;
 using NinjaTrader.NinjaScript;
 using NinjaTrader.NinjaScript.StrategyAnalyzer;
 using NinjaTrader.NinjaScript.StrategyAnalyzer.Services;
+using NinjaTrader.NinjaScript.StrategyAnalyzer.Variables;
 
 namespace NinjaTrader.NinjaScript.Strategies
 {
@@ -22,6 +23,9 @@ namespace NinjaTrader.NinjaScript.Strategies
         private int triggerWindow = 3;   // Trigger window period
         private int threshold = 1;
         private PercentageChangeIndicator percentageChangeIndicator;
+        private EMA ema;
+        private SMA sma;
+        // Add other indicators here
 
         protected override void OnStateChange()
         {
@@ -39,7 +43,14 @@ namespace NinjaTrader.NinjaScript.Strategies
                 historicalEvents = new List<string>();
 
                 percentageChangeIndicator = PercentageChangeIndicator(Close);
+                ema = EMA(Close, 21);
+                sma = SMA(Close, 50);
+                // Add other indicators initialization here
+
                 AddChartIndicator(percentageChangeIndicator);
+                AddChartIndicator(ema);
+                AddChartIndicator(sma);
+                // Add other indicators to chart here
             }
         }
 
@@ -52,6 +63,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
             LogPercentageChanges();
             LogPriceEvents();
+            LogIndicatorEvents();
             LogSupportResistanceEvents();
             LogTimeBasedEvents();
             LogPatternRecognitionEvents();
@@ -71,6 +83,15 @@ namespace NinjaTrader.NinjaScript.Strategies
                 LogEvent($"Price crossed today's opening price: {price} > {openingPriceToday}", "5m");
             if (price > openingPriceYesterday)
                 LogEvent($"Price crossed yesterday's opening price: {price} > {openingPriceYesterday}", "5m");
+        }
+
+        private void LogIndicatorEvents()
+        {
+            if (price == ema[0])
+                LogEvent("Price touches EMA (21)", "5m");
+            if (price == sma[0])
+                LogEvent("Price touches SMA (50)", "5m");
+            // Add other indicators logic here as necessary, matching with price
         }
 
         private void LogSupportResistanceEvents()
