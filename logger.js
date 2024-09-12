@@ -1,11 +1,12 @@
-const { parameters, globalParameters, getCurrentPrice, getCurrentTimeframe, getCumulativeDelta, getDeltaSP500vsNASDAQ, getOpenPositions } = require('./utils');
+const { parameters, globalParameters, initializeDataSource, loadHistoricalData } = require('./utils');
 const { tradingIsActive } = require('./config');
 const { initializeKeepAlive } = require('./keepAlive');
+const { getCurrentPriceNQ, getCurrentPriceSP } = require('./tickHandler');
 
 const SlidingWindowSize = 30;
 let slidingWindowEvents = [];
 
-// Function to log events and maintain sliding window
+// Function to log events and maintain a sliding window
 function logEvent(eventType, parameter, timeframe) {
     const eventMessage = `price_cross_${parameter}_${timeframe}`;
     console.log(eventMessage);
@@ -19,7 +20,7 @@ function logEvent(eventType, parameter, timeframe) {
 // Function to monitor price crossings with specified parameters and timeframes
 async function monitorPriceCrossings(price, parameters, timeframe) {
     for (const parameter of parameters) {
-        if (crosses(price, parameter.value)) {  // Assuming crosses is a function that checks for a crossing event
+        if (crosses(price, parameter.value)) {
             logEvent("price_cross", parameter.name, timeframe);
         }
     }
@@ -31,6 +32,24 @@ async function monitorPriceCrossings(price, parameters, timeframe) {
     if (crosses(price, globalParameters.monthlyOpen)) {
         logEvent("price_cross", "monthlyOpen", timeframe);
     }
+    if (crosses(price, globalParameters.dailyOpeningPrice)) {
+        logEvent("price_cross", "dailyOpeningPrice", timeframe);
+    }
+
+    // Trigger events for big round numbers
+    if (isBigRoundNumber(price)) {
+        logEvent("big_round_number", price, timeframe);
+    }
+
+    // Monitor pivot points
+    if (crosses(price, globalParameters.pivotPoints)) {
+        logEvent("pivot_point_cross", price, timeframe);
+    }
+}
+
+// Function to check if the price is a big round number
+function isBigRoundNumber(price) {
+    return price % 1000 === 0; // Example condition for a big round number
 }
 
 // Function to log global parameters
@@ -40,48 +59,6 @@ function logGlobalParameters(globalParameters) {
     }
 }
 
-// Function to monitor cumulative delta
-async function monitorCumulativeDelta() {
-    const cumulativeDelta = await getCumulativeDelta();
-    if (cumulativeDelta.divergence) {
-        logEvent("cumulative_delta_divergence", "cumulative_delta", "N/A");
-    } else {
-        logEvent("price_cross_cumulative_delta", "cumulative_delta", "N/A");
-    }
-}
-
-// Function to monitor delta between S&P and NASDAQ
-async function monitorDeltaSP500vsNASDAQ() {
-    const delta = await getDeltaSP500vsNASDAQ();
-    logEvent("delta_sp500_vs_nasdaq", `${delta.value}`, "N/A");
-}
-
 // Function to resume from open positions
 async function resumeFromOpenPositions() {
-    const positions = await getOpenPositions();
-    positions.forEach(position => {
-        logEvent("open_position", position.symbol, position.timeframe);
-    });
-}
-
-// Main monitoring loop to constantly check trading activity
-async function monitorTrading() {
-    while (tradingIsActive()) {
-        const price = await getCurrentPrice();
-        const timeframe = getCurrentTimeframe();
-
-        await monitorPriceCrossings(price, parameters, timeframe);
-        await monitorCumulativeDelta();
-        await monitorDeltaSP500vsNASDAQ();
-        
-        // Log global parameters
-        logGlobalParameters(globalParameters);
-
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
-    }
-}
-
-(async function startStrategy() {
-    await resumeFromOpenPositions();
-    await initializeKeepAlive(monitorTrading);
-})();
+    const positions =
