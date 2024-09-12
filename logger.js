@@ -1,10 +1,19 @@
-const { parameters, globalParameters, getCurrentPrice, getCurrentTimeframe, getCumulativeDelta, getDeltaSP500vsNASDAQ } = require('./utils');
+const { parameters, globalParameters, getCurrentPrice, getCurrentTimeframe, getCumulativeDelta, getDeltaSP500vsNASDAQ, getOpenPositions } = require('./utils');
 const { tradingIsActive } = require('./config');
+const { initializeKeepAlive } = require('./keepAlive');
 
-// Function to log events
+const SlidingWindowSize = 30;
+let slidingWindowEvents = [];
+
+// Function to log events and maintain sliding window
 function logEvent(eventType, parameter, timeframe) {
     const eventMessage = `price_cross_${parameter}_${timeframe}`;
     console.log(eventMessage);
+    
+    if (slidingWindowEvents.length >= SlidingWindowSize) {
+        slidingWindowEvents.shift();
+    }
+    slidingWindowEvents.push({ eventType: eventMessage, timestamp: new Date() });
 }
 
 // Function to monitor price crossings with specified parameters and timeframes
@@ -39,6 +48,14 @@ async function monitorDeltaSP500vsNASDAQ() {
     logEvent("delta_sp500_vs_nasdaq", `${delta.value}`, "N/A");
 }
 
+// Function to resume from open positions
+async function resumeFromOpenPositions() {
+    const positions = await getOpenPositions();
+    positions.forEach(position => {
+        logEvent("open_position", position.symbol, position.timeframe);
+    });
+}
+
 // Main monitoring loop to constantly check trading activity
 async function monitorTrading() {
     while (tradingIsActive()) {
@@ -56,4 +73,7 @@ async function monitorTrading() {
     }
 }
 
-monitorTrading();
+(async function startStrategy() {
+    await resumeFromOpenPositions();
+    await initializeKeepAlive(monitorTrading);
+})();
