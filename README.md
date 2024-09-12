@@ -8,12 +8,14 @@ This repository contains a JavaScript implementation of an event logger for trad
 - Logs significant trading events with detailed parameter and timeframe information.
 - Can be easily configured for different trading parameters and timeframes.
 - Works in real-time to capture and log trading events as they occur.
+- Integrated with MetaApi for real-time price retrieval.
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js installed on your system
+- MetaApi account credentials
 - Basic understanding of JavaScript and trading principles
 
 ### Installation
