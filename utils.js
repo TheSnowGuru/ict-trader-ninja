@@ -65,6 +65,10 @@ const globalParameters = {
     equilibriumLevels: getEquilibriumLevels(),
     recentSwingHigh: getRecentSwingHigh(),
     recentSwingLow: getRecentSwingLow(),
+    weeklyPercentChange: calculateWeeklyPercentChange(),
+    monthlyPercentChange: calculateMonthlyPercentChange(),
+    monthlyOpen: getMonthlyOpen(),
+    weeklyOpen: getWeeklyOpen()
 };
 
 async function getCurrentPrice() {
@@ -201,6 +205,26 @@ function getRecentSwingHigh() {
 
 function getRecentSwingLow() {
     // Logic to get recent swing low
+    return 0; // Placeholder
+}
+
+function calculateWeeklyPercentChange() {
+    // Logic to calculate weekly percent change
+    return 0; // Placeholder
+}
+
+function calculateMonthlyPercentChange() {
+    // Logic to calculate monthly percent change
+    return 0; // Placeholder
+}
+
+function getMonthlyOpen() {
+    // Logic to get monthly opening price
+    return 0; // Placeholder
+}
+
+function getWeeklyOpen() {
+    // Logic to get weekly opening price
     return 0; // Placeholder
 }
 
