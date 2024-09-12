@@ -92,6 +92,12 @@ async function getDeltaSP500vsNASDAQ() {
     };
 }
 
+// Function to get open positions
+async function getOpenPositions() {
+    const positions = await account.getPositions();
+    return positions;
+}
+
 // Placeholder functions to be implemented
 function calculateEMA(period) {
     // Logic to calculate EMA for a given period
@@ -210,5 +216,6 @@ module.exports = {
     getCurrentPrice,
     getCurrentTimeframe,
     getCumulativeDelta,
-    getDeltaSP500vsNASDAQ
+    getDeltaSP500vsNASDAQ,
+    getOpenPositions
 };
