@@ -10,7 +10,9 @@ This repository contains a JavaScript implementation of an event logger for trad
 - Works in real-time to capture and log trading events as they occur.
 - Integrated with MetaApi for real-time price retrieval.
 - Monitors cumulative delta and delta between S&P and NASDAQ for added confirmation.
-- **Logs global** parameters including current price, price change, distance from VWAP, highs, lows, open, close, Fibonacci levels, equilibrium levels, recent swing highs and lows.
+- Logs **global parameters including current price, price change, distance from VWAP, highs, lows, open, close, Fibonacci levels, equilibrium levels, recent swing highs and lows.**
+- Implements a sliding window to keep track of the last 30 events.
+- Includes a **keep-alive mechanism to restar**t the strategy and resume from open positions in case of any breakdown.
 
 ## Getting Started
 
@@ -24,5 +26,5 @@ This repository contains a JavaScript implementation of an event logger for trad
 
 1. Clone the repository
    ```sh
-   git clone https://github.com/your-username/ict-event-logger.git
+   git clone https://github.com/thesnowguru/ict-event-logger.git
    cd ict-event-logger
