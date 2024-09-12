@@ -9,7 +9,7 @@ let slidingWindowEvents = [];
 function logEvent(eventType, parameter, timeframe) {
     const eventMessage = `price_cross_${parameter}_${timeframe}`;
     console.log(eventMessage);
-    
+
     if (slidingWindowEvents.length >= SlidingWindowSize) {
         slidingWindowEvents.shift();
     }
@@ -22,6 +22,14 @@ async function monitorPriceCrossings(price, parameters, timeframe) {
         if (crosses(price, parameter.value)) {  // Assuming crosses is a function that checks for a crossing event
             logEvent("price_cross", parameter.name, timeframe);
         }
+    }
+
+    // Monitor cross events for global parameters
+    if (crosses(price, globalParameters.weeklyOpen)) {
+        logEvent("price_cross", "weeklyOpen", timeframe);
+    }
+    if (crosses(price, globalParameters.monthlyOpen)) {
+        logEvent("price_cross", "monthlyOpen", timeframe);
     }
 }
 
