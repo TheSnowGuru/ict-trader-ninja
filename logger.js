@@ -68,7 +68,7 @@ async function monitorPriceCrossings(price, parameters, timeframe) {
 
     // Monitor pivot points
     if (crosses(price, globalParameters.pivotPoints)) {
-        logEvent("pivot_point_cross", `${price}_level`, "N/A");
+        logEvent("pivot_point_cross", `level_${price}`, "N/A");
     }
 }
 
@@ -99,7 +99,6 @@ function checkKillZones() {
 // Main monitoring loop to constantly check trading activity
 async function monitorTrading() {
     await initializeDataSource();
-    await resumeFromOpenPositions();
 
     while (tradingIsActive()) {
         const priceNQ = await getCurrentPriceNQ();
