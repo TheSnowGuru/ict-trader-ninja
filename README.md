@@ -4,11 +4,13 @@ This repository contains a JavaScript implementation of an event logger for trad
 
 ## Features
 
-- Monitors price crossings over multiple indicators including EMA, VWAP, Fibonacci levels, support, and resistance levels.
+- Monitors price crossings over multiple indicators including **EMA, VWAP, Fibonacci levels, support, resistance levels,** etc.
 - Logs significant trading events with detailed parameter and timeframe information.
 - Can be easily configured for different trading parameters and timeframes.
 - Works in real-time to capture and log trading events as they occur.
 - Integrated with MetaApi for real-time price retrieval.
+- Monitors cumulative delta and delta between S&P and NASDAQ for added confirmation.
+- **Logs global** parameters including current price, price change, distance from VWAP, highs, lows, open, close, Fibonacci levels, equilibrium levels, recent swing highs and lows.
 
 ## Getting Started
 
