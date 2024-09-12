@@ -39,13 +39,16 @@ async function monitorPriceCrossings(price, parameters, timeframe) {
 
     // Monitor cross events for global parameters
     if (crosses(price, globalParameters.weeklyOpen)) {
-        logEvent("price_cross", "weeklyOpen", timeframe);
+        logEvent("price_cross", "weeklyOpen", "N/A");
     }
     if (crosses(price, globalParameters.monthlyOpen)) {
-        logEvent("price_cross", "monthlyOpen", timeframe);
+        logEvent("price_cross", "monthlyOpen", "N/A");
     }
     if (crosses(price, globalParameters.dailyOpeningPrice)) {
-        logEvent("price_cross", "dailyOpeningPrice", timeframe);
+        logEvent("price_cross", "dailyOpeningPrice", "N/A");
+    }
+    if (crosses(price, globalParameters.dailyPercentChange)) {
+        logEvent("price_cross", "dailyPercentChange", "N/A");
     }
 
     // Monitor for Fair Value Gaps (FVG)
@@ -65,7 +68,7 @@ async function monitorPriceCrossings(price, parameters, timeframe) {
 
     // Monitor pivot points
     if (crosses(price, globalParameters.pivotPoints)) {
-        logEvent("pivot_point_cross", price, timeframe);
+        logEvent("pivot_point_cross", `${price}_level`, "N/A");
     }
 }
 
@@ -81,13 +84,6 @@ function logGlobalParameters(globalParameters) {
     }
 }
 
-// Function to resume from open positions
-async function resumeFromOpenPositions() {
-    const positions = await getOpenPositions();
-    positions.forEach(position => {
-        logEvent("open_position", position.symbol, position.timeframe);
-    });
-}
 
 // Function to check and log Kill Zones
 function checkKillZones() {
@@ -95,9 +91,9 @@ function checkKillZones() {
     const hours = now.getUTCHours();
     const minutes = now.getUTCMinutes();
 
-    if (7 * 60 + 4 * hours + minutes > 0) logEvent("kill_zone", "New York AM", "N/A");
-    if (11 * 60 + 60 * hours + minutes > 0) logEvent("kill_zone", "NY PM/Lunch", "N/A");
-    if (13 * 60 + 60 * hours + minutes > 0) logEvent("kill_zone", "London Close", "N/A");
+    if (7 * 60 + 4 * hours + minutes > 0) logEvent("KillerZone Start", "New York AM", "N/A");
+    if (11 * 60 + 60 * hours + minutes > 0) logEvent("KillerZone End", "NY PM/Lunch", "N/A");
+    if (13 * 60 + 60 * hours + minutes > 0) logEvent("KillerZone End", "London Close", "N/A");
 }
 
 // Main monitoring loop to constantly check trading activity
