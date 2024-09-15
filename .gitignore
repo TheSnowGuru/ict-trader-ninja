@@ -3,3 +3,4 @@
 \.vscode
 .aider.conf.yml
 .config.aider.yml
+\node_modules

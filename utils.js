@@ -12,6 +12,9 @@ const parameters = [
     // Fibonacci Levels
     { name: "fib_61.8", value: calculateFibonacciLevel(61.8) },
     { name: "fib_78.6", value: calculateFibonacciLevel(78.6) },
+    { name: "fib_100", value: calculateFibonacciLevel(100) },
+    { name: "fib_200", value: calculateFibonacciLevel(-200) },
+    { name: "fib_250", value: calculateFibonacciLevel(-250) },
 
     // Support and Resistance Levels
     { name: "support_12m", value: getKeySupportLevel("12m") },
