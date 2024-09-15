@@ -1,7 +1,10 @@
-const { parameters, globalParameters, initializeDataSource, loadHistoricalData } = require('./utils');
+const { parameters, globalParameters } = require('./utils');
 const { tradingIsActive } = require('./config');
 const { initializeKeepAlive } = require('./keepAlive');
-const { getCurrentPriceNQ, getCurrentPriceSP } = require('./tickHandler');
+const { getRealTimeData } = require('./realTimeDataFeed');
+const fs = require('fs');
+const csv = require('csv-parser');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 const SlidingWindowSize = 30;
 let slidingWindowEvents = [];
@@ -84,6 +87,53 @@ function logGlobalParameters(globalParameters) {
     }
 }
 
+// Function to log events from CSV and calculate future prices
+async function logEventsFromCSV(csvFilePath, outputCsvPath) {
+    const results = [];
+    const csvWriter = createCsvWriter({
+        path: outputCsvPath,
+        header: [
+            {id: 'timestamp', title: 'TIMESTAMP'},
+            {id: 'price', title: 'PRICE'},
+            {id: 'eventName', title: 'EVENT_NAME'},
+            {id: 'priceAfter15m', title: 'PRICE_AFTER_15M'},
+            {id: 'priceAfter60m', title: 'PRICE_AFTER_60M'},
+            {id: 'priceAfter4H', title: 'PRICE_AFTER_4H'},
+            {id: 'priceAfter24H', title: 'PRICE_AFTER_24H'}
+        ]
+    });
+
+    return new Promise((resolve, reject) => {
+        fs.createReadStream(csvFilePath)
+            .pipe(csv())
+            .on('data', (data) => {
+                results.push(data);
+            })
+            .on('end', async () => {
+                const processedResults = results.map((row, index) => {
+                    return {
+                        timestamp: row.timestamp,
+                        price: parseFloat(row.price),
+                        eventName: row.eventName,
+                        priceAfter15m: index + 15 < results.length ? results[index + 15].price : 'N/A',
+                        priceAfter60m: index + 60 < results.length ? results[index + 60].price : 'N/A',
+                        priceAfter4H: index + 240 < results.length ? results[index + 240].price : 'N/A',
+                        priceAfter24H: index + 1440 < results.length ? results[index + 1440].price : 'N/A'
+                    };
+                });
+
+                try {
+                    await csvWriter.writeRecords(processedResults);
+                    console.log('CSV file was written successfully');
+                    resolve();
+                } catch (error) {
+                    console.error('Error writing CSV file:', error);
+                    reject(error);
+                }
+            });
+    });
+}
+
 
 // Function to check and log Kill Zones
 function checkKillZones() {
@@ -98,19 +148,18 @@ function checkKillZones() {
 
 // Main monitoring loop to constantly check trading activity
 async function monitorTrading() {
-    await initializeDataSource();
-
     while (tradingIsActive()) {
-        const priceNQ = await getCurrentPriceNQ();
-        const priceSP = await getCurrentPriceSP();
-        const timeframe = await getCurrentTimeframe();
+        const { price, timestamp } = getRealTimeData();
+        const timeframe = getCurrentTimeframe();
 
-        await monitorPriceCrossings(priceNQ, parameters, timeframe);
-        await monitorPriceCrossings(priceSP, parameters, timeframe);
+        await monitorPriceCrossings(price, parameters, timeframe);
 
         // Log global parameters
         logGlobalParameters(globalParameters);
         checkKillZones();
+
+        // Log the event
+        logEvent("price_update", price, timeframe);
 
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
     }

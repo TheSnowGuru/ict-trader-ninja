@@ -1,18 +1,4 @@
-const MetaApi = require('metaapi.cloud-sdk').default;
-
-const token = process.env.METAAPI_TOKEN;
-const accountId = process.env.METAAPI_ACCOUNT_ID;
-let api, account;
-
-// Initialize MetaApi connection
-async function initializeMetaApi() {
-    api = new MetaApi(token);
-    account = await api.metatraderAccountApi.getAccount(accountId);
-    await account.deploy();
-    await account.waitConnected();
-}
-
-initializeMetaApi();
+// This section has been removed as we're no longer using MetaApi
 
 // Define example parameters: EMA, VWAP, Fibonacci levels, support, resistance, etc.
 const parameters = [
