@@ -5,3 +5,4 @@
 .config.aider.yml
 \node_modules
 .env
+.aider.model.settings.yml

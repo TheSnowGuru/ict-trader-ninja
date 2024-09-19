@@ -6,6 +6,12 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
+// This script can be run directly with Node
+if (require.main === module) {
+    (async () => {
+        await initializeKeepAlive(monitorTrading);
+    })();
+}
 const SlidingWindowSize = 30;
 let slidingWindowEvents = [];
 
@@ -141,9 +147,9 @@ function checkKillZones() {
     const hours = now.getUTCHours();
     const minutes = now.getUTCMinutes();
 
-    if (7 * 60 + 4 * hours + minutes > 0) logEvent("KillerZone Start", "New York AM", "N/A");
-    if (11 * 60 + 60 * hours + minutes > 0) logEvent("KillerZone End", "NY PM/Lunch", "N/A");
-    if (13 * 60 + 60 * hours + minutes > 0) logEvent("KillerZone End", "London Close", "N/A");
+    if (7 * 60 + 4 * hours + minutes > 0) logEvent("killzoneNYstart", "New York AM", "N/A");
+    if (11 * 60 + 60 * hours + minutes > 0) logEvent("killzoneNYlunch", "NY PM/Lunch", "N/A");
+    if (13 * 60 + 60 * hours + minutes > 0) logEvent("killzoneLondonClose", "London Close", "N/A");
 }
 
 // Main monitoring loop to constantly check trading activity

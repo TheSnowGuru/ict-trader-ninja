@@ -1,6 +1,16 @@
 {
+  "name": "ict-ninja-trader", 
+  "version": "1.0.0", 
+  "description": "ict concept logger strategy",
+  "main": "logger.js", 
+  "scripts": {
+    "logger": "npm run logger" 
+  },
   "dependencies": {
     "csv-parser": "^3.0.0",
     "csv-writer": "^1.6.0"
-  }
+  },
+  "author": "Shay Ronen", 
+  "license": "ISC" 
 }
+
