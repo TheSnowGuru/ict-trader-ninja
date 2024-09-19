@@ -6,22 +6,31 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
+const args = process.argv.slice(2);
+const isCsvMode = args.includes('-csv');
+
 // This script can be run directly with Node
 if (require.main === module) {
-    (async () => {
-        await initializeKeepAlive(monitorTrading);
-    })();
+    if (isCsvMode) {
+        const inputCsvPath = 'path/to/your/input.csv'; // Update this path
+        const outputCsvPath = 'path/to/your/output.csv'; // Update this path
+        processCSV(inputCsvPath, outputCsvPath);
+    } else {
+        (async () => {
+            await initializeKeepAlive(monitorTrading);
+        })();
+    }
 }
 const SlidingWindowSize = 30;
 let slidingWindowEvents = [];
 
 // Function to log events and maintain a sliding window
 function logEvent(eventType, parameter, timeframe) {
-    const eventMessage = `price_cross_${parameter}_${timeframe}`;
+    const eventMessage = `${eventType}_${parameter}_${timeframe}`;
     const timestamp = new Date().toISOString();
     const eventName = parameter;
 
-    console.log(`${timestamp}, ${eventName}, ${eventType}, ${eventMessage}, ${price}`);
+    console.log(`${timestamp}, ${eventName}, ${eventType}, ${eventMessage}`);
 
     if (slidingWindowEvents.length >= SlidingWindowSize) {
         slidingWindowEvents.shift();
@@ -179,3 +188,38 @@ async function monitorTrading() {
 (async function startStrategy() {
     await initializeKeepAlive(monitorTrading);
 })();
+async function processCSV(inputCsvPath, outputCsvPath) {
+    const results = [];
+    const csvWriter = createCsvWriter({
+        path: outputCsvPath,
+        header: [
+            {id: 'timestamp', title: 'TIMESTAMP'},
+            {id: 'midprice', title: 'MIDPRICE'},
+            {id: 'eventName', title: 'EVENT_NAME'}
+        ]
+    });
+
+    return new Promise((resolve, reject) => {
+        fs.createReadStream(inputCsvPath)
+            .pipe(csv())
+            .on('data', (data) => {
+                const eventName = `price_update_${data.midprice}`;
+                logEvent("price_update", data.midprice, "CSV");
+                results.push({
+                    timestamp: data.timestamp,
+                    midprice: parseFloat(data.midprice),
+                    eventName: eventName
+                });
+            })
+            .on('end', async () => {
+                try {
+                    await csvWriter.writeRecords(results);
+                    console.log('CSV processing completed. Output written to:', outputCsvPath);
+                    resolve();
+                } catch (error) {
+                    console.error('Error writing CSV file:', error);
+                    reject(error);
+                }
+            });
+    });
+}
