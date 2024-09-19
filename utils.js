@@ -58,8 +58,20 @@ async function getGlobalParameters() {
         weeklyPercentChange: calculateWeeklyPercentChange(),
         monthlyPercentChange: calculateMonthlyPercentChange(),
         monthlyOpen: getMonthlyOpen(),
-        weeklyOpen: getWeeklyOpen()
+        weeklyOpen: getWeeklyOpen(),
+        dailyOpeningPrice: getDailyOpeningPrice(),
+        dailyPercentChange: calculateDailyPercentChange()
     };
+}
+
+function getDailyOpeningPrice() {
+    // Implement logic to get daily opening price
+    return 0; // Placeholder
+}
+
+function calculateDailyPercentChange() {
+    // Implement logic to calculate daily percent change
+    return 0; // Placeholder
 }
 
 async function getCurrentPrice() {

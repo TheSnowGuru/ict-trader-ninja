@@ -7,20 +7,23 @@ const csv = require('csv-parser');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const path = require('path');
 
+let globalParameters = {};
+
 const args = process.argv.slice(2);
 const isCsvMode = args.includes('-csv');
 
 // This script can be run directly with Node
 if (require.main === module) {
-    if (isCsvMode) {
-        const inputCsvPath = path.join(__dirname, 'data', 'input.csv');
-        const outputCsvPath = path.join(__dirname, 'data', 'output.csv');
-        processCSV(inputCsvPath, outputCsvPath);
-    } else {
-        (async () => {
+    (async () => {
+        globalParameters = await getGlobalParameters();
+        if (isCsvMode) {
+            const inputCsvPath = path.join(__dirname, 'data', 'input.csv');
+            const outputCsvPath = path.join(__dirname, 'data', 'output.csv');
+            await processCSV(inputCsvPath, outputCsvPath);
+        } else {
             await initializeKeepAlive(monitorTrading);
-        })();
-    }
+        }
+    })();
 }
 const SlidingWindowSize = 30;
 let slidingWindowEvents = [];
@@ -66,10 +69,10 @@ async function monitorPriceCrossings(price, parameters, timeframe) {
     if (crosses(price, globalParameters.monthlyOpen)) {
         logEvent("price_cross", "monthlyOpen", "N/A");
     }
-    if (crosses(price, globalParameters.dailyOpeningPrice)) {
+    if (globalParameters.dailyOpeningPrice && crosses(price, globalParameters.dailyOpeningPrice)) {
         logEvent("price_cross", "dailyOpeningPrice", "N/A");
     }
-    if (crosses(price, globalParameters.dailyPercentChange)) {
+    if (globalParameters.dailyPercentChange && crosses(price, globalParameters.dailyPercentChange)) {
         logEvent("price_cross", "dailyPercentChange", "N/A");
     }
 
