@@ -18,7 +18,10 @@ let slidingWindowEvents = [];
 // Function to log events and maintain a sliding window
 function logEvent(eventType, parameter, timeframe) {
     const eventMessage = `price_cross_${parameter}_${timeframe}`;
-    console.log(eventMessage);
+    const timestamp = new Date().toISOString();
+    const eventName = parameter;
+
+    console.log(`${timestamp}, ${eventName}, ${eventType}, ${eventMessage}, ${price}`);
 
     if (slidingWindowEvents.length >= SlidingWindowSize) {
         slidingWindowEvents.shift();
@@ -113,6 +116,7 @@ async function logEventsFromCSV(csvFilePath, outputCsvPath) {
         fs.createReadStream(csvFilePath)
             .pipe(csv())
             .on('data', (data) => {
+                console.log(data);
                 results.push(data);
             })
             .on('end', async () => {

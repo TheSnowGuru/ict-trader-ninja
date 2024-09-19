@@ -4,7 +4,9 @@
   "description": "ict concept logger strategy",
   "main": "logger.js", 
   "scripts": {
-    "logger": "npm run logger" 
+    "logger": "node logger.js",
+    "logger-csv": "node logger.js -csv",
+    "logger-realtime": "node logger.js -realtime"
   },
   "dependencies": {
     "csv-parser": "^3.0.0",
