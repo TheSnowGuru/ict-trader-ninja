@@ -1,4 +1,4 @@
-const { parameters, globalParameters } = require('./utils');
+const { parameters, getGlobalParameters } = require('./utils');
 const { tradingIsActive } = require('./config');
 const { initializeKeepAlive } = require('./keepAlive');
 const { getRealTimeData } = require('./realTimeDataFeed');
@@ -99,7 +99,8 @@ function isBigRoundNumber(price) {
 }
 
 // Function to log global parameters
-function logGlobalParameters(globalParameters) {
+async function logGlobalParameters() {
+    const globalParameters = await getGlobalParameters();
     for (const [key, value] of Object.entries(globalParameters)) {
         console.log(`${key}: ${value}`);
     }
@@ -174,7 +175,7 @@ async function monitorTrading() {
         await monitorPriceCrossings(price, parameters, timeframe);
 
         // Log global parameters
-        logGlobalParameters(globalParameters);
+        await logGlobalParameters();
         checkKillZones();
 
         // Log the event

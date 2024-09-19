@@ -42,23 +42,25 @@ const parameters = [
 ];
 
 // Define global parameters
-const globalParameters = {
-    price: await getCurrentPrice(),
-    priceChange: calculatePriceChange(),
-    priceDistanceFromVWAP: calculatePriceDistanceFromVWAP(),
-    highs: getHighs(),
-    lows: getLows(),
-    open: getOpen(),
-    close: getClose(),
-    fibLevel: getFibLevel(),
-    equilibriumLevels: getEquilibriumLevels(),
-    recentSwingHigh: getRecentSwingHigh(),
-    recentSwingLow: getRecentSwingLow(),
-    weeklyPercentChange: calculateWeeklyPercentChange(),
-    monthlyPercentChange: calculateMonthlyPercentChange(),
-    monthlyOpen: getMonthlyOpen(),
-    weeklyOpen: getWeeklyOpen()
-};
+async function getGlobalParameters() {
+    return {
+        price: await getCurrentPrice(),
+        priceChange: calculatePriceChange(),
+        priceDistanceFromVWAP: calculatePriceDistanceFromVWAP(),
+        highs: getHighs(),
+        lows: getLows(),
+        open: getOpen(),
+        close: getClose(),
+        fibLevel: getFibLevel(),
+        equilibriumLevels: getEquilibriumLevels(),
+        recentSwingHigh: getRecentSwingHigh(),
+        recentSwingLow: getRecentSwingLow(),
+        weeklyPercentChange: calculateWeeklyPercentChange(),
+        monthlyPercentChange: calculateMonthlyPercentChange(),
+        monthlyOpen: getMonthlyOpen(),
+        weeklyOpen: getWeeklyOpen()
+    };
+}
 
 async function getCurrentPrice() {
     const accountInfo = await account.getAccountInformation();
@@ -225,7 +227,7 @@ function crosses(price, value) {
 
 module.exports = {
     parameters,
-    globalParameters,
+    getGlobalParameters,
     getCurrentPrice,
     getCurrentTimeframe,
     getCumulativeDelta,
