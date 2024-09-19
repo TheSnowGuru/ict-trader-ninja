@@ -89,8 +89,8 @@ async function getDeltaSP500vsNASDAQ() {
 
 // Function to get open positions
 async function getOpenPositions() {
-    const positions = await account.getPositions();
-    return positions;
+    // Placeholder implementation
+    return []; // Return an empty array for now
 }
 
 // Placeholder functions to be implemented

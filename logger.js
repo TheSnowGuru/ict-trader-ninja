@@ -1,4 +1,4 @@
-const { parameters, getGlobalParameters, getCurrentTimeframe } = require('./utils');
+const { parameters, getGlobalParameters, getCurrentTimeframe, crosses } = require('./utils');
 const { tradingIsActive } = require('./config');
 const { initializeKeepAlive } = require('./keepAlive');
 const { getRealTimeData } = require('./realTimeDataFeed');
