@@ -17,7 +17,7 @@ if (require.main === module) {
     (async () => {
         globalParameters = await getGlobalParameters();
         if (isCsvMode) {
-            const inputCsvPath = path.join(__dirname, 'data', 'input.csv');
+            const inputCsvPath = path.join(__dirname, 'data', 'nasdaq-tick-1y-09.csv');
             const outputCsvPath = path.join(__dirname, 'data', 'output.csv');
             await processCSV(inputCsvPath, outputCsvPath);
         } else {
