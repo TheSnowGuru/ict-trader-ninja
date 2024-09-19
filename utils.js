@@ -75,8 +75,9 @@ function calculateDailyPercentChange() {
 }
 
 async function getCurrentPrice() {
-    const accountInfo = await account.getAccountInformation();
-    return accountInfo.equity; // For demonstration purposes
+    // const accountInfo = await account.getAccountInformation();
+    // return accountInfo.equity; // For demonstration purposes
+    return 15000; // Placeholder value
 }
 
 function getCurrentTimeframe() {
