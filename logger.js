@@ -1,7 +1,7 @@
 const { parameters, getGlobalParameters, getCurrentTimeframe, crosses } = require('./utils');
 const { tradingIsActive } = require('./config');
 const { initializeKeepAlive } = require('./keepAlive');
-const { getRealTimeData } = require('./realTimeDataFeed');
+const { getRealTimeData, getHistoricalDataFromRealTime } = require('./realTimeDataFeed');
 const fs = require('fs');
 const csv = require('csv-parser');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
@@ -79,8 +79,7 @@ async function monitorPriceCrossings(price, parameters, timeframe) {
     // Monitor for Fair Value Gaps (FVG)
     const timeframes = ["1m", "5m", "15m"];  // Example timeframes
     for (const tf of timeframes) {
-        // Assume getHistoricalData is a function that fetches price data for the timeframe
-        const priceData = getHistoricalData(price, tf);
+        const priceData = await getHistoricalData(price, tf);
         if (detectFVG(price, priceData, tf)) {
             logEvent("FVG_detected", "FVG", tf);
         }
@@ -100,6 +99,25 @@ async function monitorPriceCrossings(price, parameters, timeframe) {
 // Function to check if the price is a big round number
 function isBigRoundNumber(price) {
     return price % 1000 === 0; // Example condition for a big round number
+}
+
+// Function to get historical data
+async function getHistoricalData(price, timeframe) {
+    if (isCsvMode) {
+        return getHistoricalDataFromCSV(timeframe);
+    } else {
+        return getHistoricalDataFromRealTime(timeframe);
+    }
+}
+
+// Function to get historical data from CSV
+function getHistoricalDataFromCSV(timeframe) {
+    // Assuming the CSV data is stored in a global variable or accessible somehow
+    // This is a placeholder implementation
+    return results.slice(0, 100).map(row => ({
+        timestamp: row.timestamp,
+        price: parseFloat(row.midprice)
+    }));
 }
 
 // Function to log global parameters
