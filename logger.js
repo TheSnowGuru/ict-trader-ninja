@@ -1,10 +1,11 @@
-const { parameters, getGlobalParameters } = require('./utils');
+const { parameters, getGlobalParameters, getCurrentTimeframe } = require('./utils');
 const { tradingIsActive } = require('./config');
 const { initializeKeepAlive } = require('./keepAlive');
 const { getRealTimeData } = require('./realTimeDataFeed');
 const fs = require('fs');
 const csv = require('csv-parser');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const path = require('path');
 
 const args = process.argv.slice(2);
 const isCsvMode = args.includes('-csv');
@@ -12,8 +13,8 @@ const isCsvMode = args.includes('-csv');
 // This script can be run directly with Node
 if (require.main === module) {
     if (isCsvMode) {
-        const inputCsvPath = 'path/to/your/input.csv'; // Update this path
-        const outputCsvPath = 'path/to/your/output.csv'; // Update this path
+        const inputCsvPath = path.join(__dirname, 'data', 'input.csv');
+        const outputCsvPath = path.join(__dirname, 'data', 'output.csv');
         processCSV(inputCsvPath, outputCsvPath);
     } else {
         (async () => {

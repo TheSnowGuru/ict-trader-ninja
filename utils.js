@@ -232,5 +232,6 @@ module.exports = {
     getCurrentTimeframe,
     getCumulativeDelta,
     getDeltaSP500vsNASDAQ,
-    getOpenPositions
+    getOpenPositions,
+    crosses // Add this line to export the crosses function
 };
